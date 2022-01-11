@@ -1,0 +1,2 @@
+from .sstest import test
+
