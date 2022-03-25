@@ -1,2 +1,2 @@
-from .sstest import test
-
+import sstest
+import nonpar
