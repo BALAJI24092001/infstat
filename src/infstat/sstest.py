@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 class oneMean:
     '''
-
+    This is for one mean test
     '''
     def __init__(self, data, mean, x=None):
         dt = None;
