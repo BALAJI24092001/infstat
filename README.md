@@ -3,3 +3,4 @@ infstat : Visualising inferential statistics and exploratory data analysis with 
 
 
 
+runTest(): + runTestCriValues ===> 7hrs 
