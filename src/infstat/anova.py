@@ -8,7 +8,7 @@ class dictionaryArraySizeException(Exception):
 class anova:
     def __init__(self, data, alpha = 0.005, kind="crd", tail = "both"):
         self.Fcal = 0;
-        self.treatmentDegreeOfFreedom = len(data);
+        self.treatmentDegreeOfFreedom = len(data.columns);
         self.lstSize = list();
         self.lstData = list();
         if type(data) == type(pd.DataFrame()):
@@ -50,5 +50,9 @@ if __name__ == "__main__":
     dictionary = {"A": [55, 49, 42, 21, 52], "B": [61, 112, 30, 89, 63], "C": [42, 97, 81, 95, 92],  "D": [169, 137, 169, 85, 154]}
 
     # instanciating the object of anova class
-    obj =  anova(data = dictionary);
-    print(obj.Fcal)
+    data = pd.read_csv("input/test.csv")
+    obj0 =  anova(data = dictionary);
+    obj1 = anova(data = data)
+
+    print("F cal value from dictionary data is : ", obj0.Fcal);
+    print("F cal value from CSV file data is : ", obj1.Fcal);
