@@ -5,7 +5,24 @@ class dataErrorException(Exception):
 class dictionaryArraySizeException(Exception):
     def __init__(self):
         super().__init__("ArraySizeErrorException: values in the dictionary are not of the same size. Add commas and leave the blanks incase of no values");
+
 class anova:
+    """
+    Perform one-way and two-way anova on multiple samples of based on CRD(Completely randomized design) or RBD(Randomized block design).
+    Hypothesis: 
+        H0: Mu1 = Mu2 = ... = Mun = Mu (CRD) or (RBD 1)
+        H1: Mui != Muj ; i!= j ; i,j = 1, 2, 3, ... n
+
+        H0: Mu1 = Mu2 = ... = Mun = Mu (RBD 2)
+        H1: Mui != Muj ; i != j ; i,j = 1, 2, 3, ... n
+    Aim: (CRD) To check whether if there is a significant difference in the mean between the rows(some given treatment).
+         (RBD) To check whether if there is a significant difference in the mean samples of blocks and treatments.
+
+    Parameters
+    ``````````
+    data : array-like
+           Pandas DataFrame or dictionary data. Note: Each sample in the dataFrame must be in a single column, row wise sample data is not encouraged, not to be included soon with specifying parameter.
+    """
     def __init__(self, data, alpha = 0.005, kind="crd", tail = "both"):
         self.Fcal = 0;
         self.treatmentDegreeOfFreedom = len(data.columns);
@@ -43,6 +60,8 @@ class anova:
         meanTreatmentSumOfSquares = treatmentSumOfSquares/(self.treatmentDegreeOfFreedom-1);
         meanErrorSumOfSquares = errorSumOfSquares/(N-self.treatmentDegreeOfFreedom);
         self.Fcal = meanTreatmentSumOfSquares/meanErrorSumOfSquares;
+    def summary(self):
+        pass;
 if __name__ == "__main__":
     # crd testing
 
@@ -53,6 +72,5 @@ if __name__ == "__main__":
     data = pd.read_csv("input/test.csv")
     obj0 =  anova(data = dictionary);
     obj1 = anova(data = data)
-
     print("F cal value from dictionary data is : ", obj0.Fcal);
     print("F cal value from CSV file data is : ", obj1.Fcal);
