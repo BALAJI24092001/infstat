@@ -87,12 +87,7 @@ class anova:
     9.612824127996081
     """
     def __init__(self, data, alpha = 0.05, kind="crd", tail = "both"):
-        self.dataColumns = data.columns
         self.data = data;
-        self.Fcal = 0;
-        self.treatmentDegreeOfFreedom = len(data.columns);
-        self.lstSize = list();
-        self.lstData = list();
         if type(data) == type(pd.DataFrame()):
             pass;
         elif type(data) == dict:
@@ -105,7 +100,11 @@ class anova:
         elif kind == "rbd":
             rbd();
     def crd(self):
-        for i, j in zip(self.dataColumns,range(self.treatmentDegreeOfFreedom)):
+        self.Fcal = 0;
+        self.treatmentDegreeOfFreedom = len(self.data.columns);
+        self.lstSize = list();
+        self.lstData = list();
+        for i, j in zip(self.data.columns,range(self.treatmentDegreeOfFreedom)):
             temp = self.data[i];
             self.lstData.append([k for k in temp if str(k) != 'nan'])
             self.lstSize.append(len(self.lstData[j]))        
@@ -129,7 +128,17 @@ class anova:
         meanErrorSumOfSquares = errorSumOfSquares/(N-self.treatmentDegreeOfFreedom);
         self.Fcal = meanTreatmentSumOfSquares/meanErrorSumOfSquares;
     def rbd(self):
-        pass;
+        """
+        Given a two-way classified data caluculates whether there is any significant difference in the blocks or columns.
+        """
+        self.treatmentDegreeOfFreedom = len(self.data.columns)
+        self.blockDegreeOfFreedom = len(self.data)
+        self.treatments = [list(self.data[i]) for i in self.data.columns]
+        self.blocks = [list(self.data.iloc[i]) for i in range(len(data))]
+        self.treatmentSums = [sum(i) for i in self.treatments]
+        self.blockSums = [sum(i) for i in self.blocks]
+        self.treatmentSumOfSquares = [i**2 for i in self.treatmentSums]
+        self.blockSumOfSquares = [i**2 for i in self.blockSums]
     def summary(self):
         pass;
 if __name__ == "__main__":
