@@ -62,8 +62,33 @@ class anova:
            the length of the DataFrame or the number of coumns indicates the 
            size of each row sample and column sample in randomized block
            design respectively.
+
+    References:
+    ```````````
+    [1]. Statistics How to: Anova 
+         https://www.statisticshowto.com/probability-and-statistics/hypothesis-testing/anova/
+    [2]. Analysis of variance 
+         https://en.wikipedia.org/wiki/Analysis_of_variance
+    [3]. Analysis of variance (Explained) : Towards Data Science
+         https://towardsdatascience.com/anova-analysis-of-variance-explained-b48fee6380af
+
+    Example:
+    >> import pandas as pd
+    >> import anova as av
+    >> data = pd.read_csv("input/test.csv")
+    >> data
+          A     B     C     D
+    0   5.7  18.9  29.4  29.1
+    1  10.2  19.1  16.4  21.2
+    2   5.4  24.0  37.0  38.8
+    3   9.5  24.9  41.7  28.9
+    >> mod = av.anova(data)
+    >> mod.Fcal
+    9.612824127996081
     """
     def __init__(self, data, alpha = 0.05, kind="crd", tail = "both"):
+        self.dataColumns = data.columns
+        self.data = data;
         self.Fcal = 0;
         self.treatmentDegreeOfFreedom = len(data.columns);
         self.lstSize = list();
@@ -73,37 +98,40 @@ class anova:
         elif type(data) == dict:
             keys = [i for i in data]
             data = pd.DataFrame(data)
-            
         else:
             raise dataErrorException();
-        if(kind=="crd"):
-            crd();
+        if kind == "crd":
+            self.crd();
+        elif kind == "rbd":
+            rbd();
     def crd(self):
-            for i, j in zip(data.columns,range(self.treatmentDegreeOfFreedom)):
-                temp = data[i];
-                self.lstData.append([k for k in temp if str(k) != 'nan'])
-                self.lstSize.append(len(self.lstData[j]))        
-            N = sum(self.lstSize)
-            G = 0;
-            for i in range(self.treatmentDegreeOfFreedom):
-                for j in range(self.lstSize[i]):
-                    G += self.lstData[i][j]
-            CF = G**2 / N
-            SS = 0;
-            for i in self.lstData:
-                for j in i:
-                    SS += j**2;
-            totalSumOfSquares = SS - CF;
-            SS = 0;
-            for i in range(self.treatmentDegreeOfFreedom):
-                SS += sum(self.lstData[i])**2 / self.lstSize[i]
-            treatmentSumOfSquares = SS - CF;
-            errorSumOfSquares = totalSumOfSquares - treatmentSumOfSquares;
-            meanTreatmentSumOfSquares = treatmentSumOfSquares/(self.treatmentDegreeOfFreedom-1);
-            meanErrorSumOfSquares = errorSumOfSquares/(N-self.treatmentDegreeOfFreedom);
-            self.Fcal = meanTreatmentSumOfSquares/meanErrorSumOfSquares;
+        for i, j in zip(self.dataColumns,range(self.treatmentDegreeOfFreedom)):
+            temp = self.data[i];
+            self.lstData.append([k for k in temp if str(k) != 'nan'])
+            self.lstSize.append(len(self.lstData[j]))        
+        N = sum(self.lstSize)
+        G = 0;
+        for i in range(self.treatmentDegreeOfFreedom):
+            for j in range(self.lstSize[i]):
+                G += self.lstData[i][j]
+        CF = G**2 / N
+        SS = 0;
+        for i in self.lstData:
+            for j in i:
+                SS += j**2;
+        totalSumOfSquares = SS - CF;
+        SS = 0;
+        for i in range(self.treatmentDegreeOfFreedom):
+            SS += sum(self.lstData[i])**2 / self.lstSize[i]
+        treatmentSumOfSquares = SS - CF;
+        errorSumOfSquares = totalSumOfSquares - treatmentSumOfSquares;
+        meanTreatmentSumOfSquares = treatmentSumOfSquares/(self.treatmentDegreeOfFreedom-1);
+        meanErrorSumOfSquares = errorSumOfSquares/(N-self.treatmentDegreeOfFreedom);
+        self.Fcal = meanTreatmentSumOfSquares/meanErrorSumOfSquares;
     def rbd(self):
-        self.blockDegreeOfFreedom = 0;
+        pass;
+    def summary(self):
+        pass;
 if __name__ == "__main__":
     # crd testing
 
